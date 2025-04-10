@@ -35,8 +35,40 @@ class PathGenerator(Node):
             return
         
         self.path_points = self.params[self.selected_path]
-        processed_points = self.process_path(self.path_points)
-        self.publish_path(processed_points)
+        self.processed_points = self.process_path(self.path_points)
+        
+        # Timer-related variables
+        self.current_point_index = 0
+        self.last_publish_time = self.get_clock().now().nanoseconds / 1e9
+        self.path_start_time = None
+        
+        # Create a timer (10Hz - adjust frequency as needed)
+        self.timer = self.create_timer(0.1, self.timer_callback)  # 100ms = 10Hz
+        
+        # Service to control path playback (optional)
+        # self.create_service(StartPath, 'start_path', self.start_path_callback)
+
+    def timer_callback(self):
+        """Timer callback that publishes points at their scheduled times"""
+        if not self.processed_points or self.current_point_index >= len(self.processed_points):
+            return
+            
+        if self.path_start_time is None:
+            self.path_start_time = self.get_clock().now().nanoseconds / 1e9
+            return
+            
+        current_time = self.get_clock().now().nanoseconds / 1e9 - self.path_start_time
+        next_point = self.processed_points[self.current_point_index]
+        
+        # Check if it's time to publish the next point
+        if current_time >= next_point.time:
+            self.publish_point(next_point)
+            self.current_point_index += 1
+            
+            # Log when we've published all points
+            if self.current_point_index >= len(self.processed_points):
+                self.get_logger().info("All path points published!")
+                self.timer.cancel()
 
     def process_path(self, path_data):
         """Process path and calculate missing values"""
@@ -138,18 +170,17 @@ class PathGenerator(Node):
         
         return processed_points
 
-    def publish_path(self, path_points):
-        """Publish processed path as PathPoint messages"""
-        for point in path_points:
-            self.path_pub.publish(point)
-            self.get_logger().info(
-                f"Published Point at {point.time:.2f}s:\n"
-                f"  Position: [{point.pose.position.x:.2f}, {point.pose.position.y:.2f}]\n"
-                f"  Orientation: [{point.pose.orientation.z:.2f} rad]\n"
-                f"  Linear Vel: [{point.velocity.linear.x:.2f}, {point.velocity.linear.y:.2f}] m/s\n"
-                f"  Angular Vel: {point.velocity.angular.z:.2f} rad/s\n"
-            )
-            rclpy.spin_once(self, timeout_sec=0.1)
+    def publish_point(self, point):
+        """Publish a single path point with logging"""
+        self.path_pub.publish(point)
+        self.get_logger().info(
+            f"Published Point at {point.time:.2f}s:\n"
+            f"  Position: [{point.pose.position.x:.2f}, {point.pose.position.y:.2f}]\n"
+            f"  Orientation: [{point.pose.orientation.z:.2f} rad]\n"
+            f"  Linear Vel: [{point.velocity.linear.x:.2f}, {point.velocity.linear.y:.2f}] m/s\n"
+            f"  Angular Vel: {point.velocity.angular.z:.2f} rad/s\n"
+        )
+        self.last_publish_time = self.get_clock().now().nanoseconds / 1e9
 
     # Helper functions
     def dict_to_pose(self, pose_dict):
