@@ -1,113 +1,105 @@
+#!/usr/bin/env python3
 import rclpy
 from rclpy.node import Node
-from geometry_msgs.msg import Twist
+from geometry_msgs.msg import Twist, PoseStamped
 from challenge_interfaces.msg import PathPoint
-from rcl_interfaces.msg import ParameterDescriptor
 import math
-from collections import deque
 
-class OpenLoopPathCtrlNode(Node):
+class PathController(Node):
     def __init__(self):
-        super().__init__('open_loop_path_ctrl')
+        super().__init__('open_loop_path_ctrl_node')
         
-        # Publisher to /cmd_vel
+        # Subscriber to path points
+        self.path_sub = self.create_subscription(
+            PathPoint, 
+            'path_points', 
+            self.path_callback, 
+            10)
+            
+        # Publisher for velocity commands
         self.cmd_vel_pub = self.create_publisher(Twist, 'cmd_vel', 10)
         
-        # Subscriber to /pose (from path_generator_node)
-        self.pose_sub = self.create_subscription(
-            PathPoint, 'pose', self.path_point_callback, 10)
+        # Publisher for visualization (optional)
+        self.target_pub = self.create_publisher(PoseStamped, 'target_pose', 10)
         
-        # Parameters
-        self.declare_parameter('lookahead_time', 0.2, 
-                               ParameterDescriptor(description='Time to look ahead on the path'))
-        self.declare_parameter('control_frequency', 20.0, 
-                               ParameterDescriptor(description='Control loop frequency in Hz'))
+        # Controller parameters
+        self.declare_parameter('linear_tolerance', 0.05)  # meters
+        self.declare_parameter('angular_tolerance', 0.1)  # radians
+        self.declare_parameter('max_linear_vel', 0.5)     # m/s
+        self.declare_parameter('max_angular_vel', 1.0)    # rad/s
         
-        # Path storage
-        self.path_points = deque()
+        # Current target point
         self.current_target = None
-        self.next_target = None
-        self.path_started = False
-        self.path_complete = False
+        self.current_index = 0
         
-        # Time tracking
-        self.start_time = None
+        # Timer for control loop
+        self.control_timer = self.create_timer(0.1, self.control_loop)  # 20Hz
         
-        # Control loop timer
-        control_period = 1.0 / self.get_parameter('control_frequency').get_parameter_value().double_value
-        self.timer = self.create_timer(control_period, self.control_loop)
-        
-        self.get_logger().info("Trajectory follower initialized and waiting for path points...")
+        self.get_logger().info("Path Controller initialized")
 
-    def path_point_callback(self, msg):
-        """Store incoming path points from the path generator"""
-        self.path_points.append(msg)
-        self.get_logger().debug(f"Received path point: pos=({msg.pose.position.x:.2f}, {msg.pose.position.y:.2f}), "
-                               f"time={msg.time:.2f}")
+    def path_callback(self, msg):
+        """Store the latest path point as target"""
+        self.current_target = msg
+        self.current_index += 1
         
-        # Initialize path following when we get the first point
-        if not self.path_started and len(self.path_points) > 0:
-            self.current_target = self.path_points.popleft()
-            self.start_time = self.get_clock().now()
-            self.path_started = True
-            self.get_logger().info("Path following started!")
+        # Publish target pose for visualization
+        target_pose = PoseStamped()
+        target_pose.header.stamp = self.get_clock().now().to_msg()
+        target_pose.header.frame_id = "odom"
+        target_pose.pose = msg.pose
+        self.target_pub.publish(target_pose)
+        
+        self.get_logger().info(
+            f"Received new target point {self.current_index}: "
+            f"Position: [{msg.pose.position.x:.2f}, {msg.pose.position.y:.2f}], "
+            f"Velocity: [lin: {msg.velocity.linear.x:.2f}, ang: {msg.velocity.angular.z:.2f}]"
+        )
 
     def control_loop(self):
-        """Main control loop for following the trajectory"""
-        if not self.path_started or self.path_complete:
-            # Nothing to do yet or we're done
+        """Main control loop that publishes velocity commands"""
+        if self.current_target is None:
             return
             
-        # Calculate elapsed time since path start
-        now = self.get_clock().now()
-        elapsed_seconds = (now - self.start_time).nanoseconds * 1e-9
+        # Create velocity command
+        cmd_vel = Twist()
         
-        # Use the velocity commands from the current target point
-        cmd = Twist()
-        cmd.linear.x = self.current_target.velocity.linear.x
-        cmd.angular.z = self.current_target.velocity.angular.z
+        # Open-loop control - simply use the commanded velocities
+        # (For closed-loop, you would calculate errors here)
+        cmd_vel.linear.x = self.current_target.velocity.linear.x
+        cmd_vel.linear.y = self.current_target.velocity.linear.y
+        cmd_vel.angular.z = self.current_target.velocity.angular.z
         
-        # Check if it's time to move to the next point
-        if len(self.path_points) > 0:
-            next_point = self.path_points[0]  # Peek at next point
-            
-            if elapsed_seconds >= next_point.time:
-                # Time to move to next point
-                self.current_target = self.path_points.popleft()
-                self.get_logger().info(f"Moving to next path point: "
-                                     f"pos=({self.current_target.pose.position.x:.2f}, "
-                                     f"{self.current_target.pose.position.y:.2f}), "
-                                     f"time={self.current_target.time:.2f}")
-                
-                # Update velocities
-                cmd.linear.x = self.current_target.velocity.linear.x
-                cmd.angular.z = self.current_target.velocity.angular.z
+        # Apply velocity limits
+        max_lin = self.get_parameter('max_linear_vel').value
+        max_ang = self.get_parameter('max_angular_vel').value
         
-        # Check if we've reached the end of the path
-        elif elapsed_seconds >= self.current_target.time:
-            # We've completed the path
-            self.get_logger().info("Path completed!")
-            cmd.linear.x = 0.0
-            cmd.angular.z = 0.0
-            self.path_complete = True
+        cmd_vel.linear.x = max(-max_lin, min(max_lin, cmd_vel.linear.x))
+        cmd_vel.linear.y = max(-max_lin, min(max_lin, cmd_vel.linear.y))
+        cmd_vel.angular.z = max(-max_ang, min(max_ang, cmd_vel.angular.z))
         
-        # Publish velocity command
-        self.cmd_vel_pub.publish(cmd)
-        self.get_logger().debug(f"Published velocity: linear={cmd.linear.x:.3f}, angular={cmd.angular.z:.3f}")
+        self.get_logger().info(f"Linear velocity x: {cmd_vel.linear.x}")
+        self.get_logger().info(f"Linear velocity y: {cmd_vel.linear.y}")
+        self.get_logger().info(f"Angular velocity z: {cmd_vel.angular.z}")
+
+        self.cmd_vel_pub.publish(cmd_vel)
+
+    def stop_robot(self):
+        """Stop the robot by publishing zero velocities"""
+        cmd_vel = Twist()
+        self.cmd_vel_pub.publish(cmd_vel)
+        self.get_logger().info("Stopping robot")
 
 def main(args=None):
     rclpy.init(args=args)
-    node = OpenLoopPathCtrlNode()
+    
+    controller = PathController()
     
     try:
-        rclpy.spin(node)
+        rclpy.spin(controller)
     except KeyboardInterrupt:
-        node.get_logger().info("Trajectory following interrupted by user")
+        controller.stop_robot()
     finally:
-        # Ensure robot stops when node is terminated
-        stop_cmd = Twist()
-        node.cmd_vel_pub.publish(stop_cmd)
-        node.destroy_node()
+        controller.destroy_node()
         rclpy.shutdown()
 
 if __name__ == '__main__':
