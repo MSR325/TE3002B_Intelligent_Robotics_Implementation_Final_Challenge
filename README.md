@@ -31,7 +31,7 @@ def generate_launch_description():
     )
 ``` 
 
-To run the **path_generator** node, run the following command after running **colcon_build** and sourcing with
+To run the **path_generator** node and the **open_loop_path_ctrl** controller node, run the following command after running **colcon_build** and sourcing with
 **source install/setup.bash**:
 
 ```
