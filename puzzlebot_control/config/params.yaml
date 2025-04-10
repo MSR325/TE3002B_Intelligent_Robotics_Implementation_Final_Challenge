@@ -1,0 +1,243 @@
+path_generator_node:
+  ros__parameters:
+    paths:
+      figure_8_path_time:
+        point_0:
+          pose:
+            position: {x: 0.0, y: -1.0, z: 0.0}
+            orientation: {x: 0.0, y: 0.0, z: 0.7071, w: 0.7071}  # yaw = 90°
+          velocity:
+            linear: {x: 0.0, y: 0.0, z: 0.0}
+            angular: {x: 0.0, y: 0.0, z: 0.0}
+          time: 0.0
+        point_1:
+          pose:
+            position: {x: 1.0, y: 0.0, z: 0.0}
+            orientation: {x: 0.0, y: 0.0, z: 1.0, w: 0.0}  # yaw = 180°
+          velocity:
+            linear: {x: 0.0, y: 0.0, z: 0.0}
+            angular: {x: 0.0, y: 0.0, z: 0.0}
+          time: 5.0
+        point_2:
+          pose:
+            position: {x: 0.0, y: 1.0, z: 0.0}
+            orientation: {x: 0.0, y: 0.0, z: -0.7071, w: 0.7071}  # yaw = -90°
+          velocity:
+            linear: {x: 0.0, y: 0.0, z: 0.0}
+            angular: {x: 0.0, y: 0.0, z: 0.0}
+          time: 10.0
+        point_3:
+          pose:
+            position: {x: -1.0, y: 0.0, z: 0.0}
+            orientation: {x: 0.0, y: 0.0, z: 0.0, w: 1.0}  # yaw = 0°
+          velocity:
+            linear: {x: 0.0, y: 0.0, z: 0.0}
+            angular: {x: 0.0, y: 0.0, z: 0.0}
+          time: 15.0
+        point_4:
+          pose:
+            position: {x: 0.0, y: -1.0, z: 0.0}
+            orientation: {x: 0.0, y: 0.0, z: 0.7071, w: 0.7071}  # back to yaw = 90°
+          velocity:
+            linear: {x: 0.0, y: 0.0, z: 0.0}
+            angular: {x: 0.0, y: 0.0, z: 0.0}
+          time: 20.0
+      
+      square_path_time:
+        point_0:
+          pose:
+            position: {x: 0.0, y: 0.0, z: 0.0}
+            orientation: {x: 0.0, y: 0.0, z: 0.0, w: 1.0}  # yaw = 0
+          velocity:
+            linear: {x: 0.0, y: 0.0, z: 0.0}
+            angular: {x: 0.0, y: 0.0, z: 0.0}
+          time: 0.0
+        point_1:
+          pose:
+            position: {x: 2.0, y: 0.0, z: 0.0}
+            orientation: {x: 0.0, y: 0.0, z: -0.7071, w: 0.7071}  # yaw = -90°
+          velocity:
+            linear: {x: 0.0, y: 0.0, z: 0.0}
+            angular: {x: 0.0, y: 0.0, z: 0.0}
+          time: 10.0
+        point_2:
+          pose:
+            position: {x: 2.0, y: -2.0, z: 0.0}
+            orientation: {x: 0.0, y: 0.0, z: -1.0, w: 0.0}  # yaw = -180°
+          velocity:
+            linear: {x: 0.0, y: 0.0, z: 0.0}
+            angular: {x: 0.0, y: 0.0, z: 0.0}
+          time: 20.0
+        point_3:
+          pose:
+            position: {x: 0.0, y: -2.0, z: 0.0}
+            orientation: {x: 0.0, y: 0.0, z: 0.7071, w: 0.7071}  # yaw = +90°
+          velocity:
+            linear: {x: 0.0, y: 0.0, z: 0.0}
+            angular: {x: 0.0, y: 0.0, z: 0.0}
+          time: 30.0
+        point_4:
+          pose:
+            position: {x: 0.0, y: 0.0, z: 0.0}
+            orientation: {x: 0.0, y: 0.0, z: 0.0, w: 1.0}  # yaw = 0°
+          velocity:
+            linear: {x: 0.0, y: 0.0, z: 0.0}
+            angular: {x: 0.0, y: 0.0, z: 0.0}
+          time: 40.0
+
+      triangle_path_time:
+        point_0:
+          pose:
+            position: {x: 0.0, y: -1.0, z: 0.0}
+            orientation: {x: 0.0, y: 0.0, z: 0.5, w: 0.866}  # yaw = +60°
+          velocity:
+            linear: {x: 0.0, y: 0.0, z: 0.0}
+            angular: {x: 0.0, y: 0.0, z: 0.0}
+          time: 0.0
+        point_1:
+          pose:
+            position: {x: 1.732, y: 1.0, z: 0.0}
+            orientation: {x: 0.0, y: 0.0, z: 1.0, w: 0.0}  # yaw = +180°
+          velocity:
+            linear: {x: 0.0, y: 0.0, z: 0.0}
+            angular: {x: 0.0, y: 0.0, z: 0.0}
+          time: 7.0
+        point_2:
+          pose:
+            position: {x: -1.732, y: 1.0, z: 0.0}
+            orientation: {x: 0.0, y: 0.0, z: -0.5, w: 0.866}  # yaw = -60°
+          velocity:
+            linear: {x: 0.0, y: 0.0, z: 0.0}
+            angular: {x: 0.0, y: 0.0, z: 0.0}
+          time: 14.0
+        point_3:
+          pose:
+            position: {x: 0.0, y: -1.0, z: 0.0}
+            orientation: {x: 0.0, y: 0.0, z: 0.5, w: 0.866}  # back to yaw = +60°
+          velocity:
+            linear: {x: 0.0, y: 0.0, z: 0.0}
+            angular: {x: 0.0, y: 0.0, z: 0.0}
+          time: 21.0
+
+      square_path_speed:
+        point_0:
+          pose:
+            position: {x: 0.0, y: 0.0, z: 0.0}
+            orientation: {x: 0.0, y: 0.0, z: 0.0, w: 1.0}
+          velocity:
+            linear: {x: 0.2, y: 0.0, z: 0.0}
+            angular: {x: 0.0, y: 0.0, z: -0.1571}
+          time: 0.0
+        point_1:
+          pose:
+            position: {x: 2.0, y: 0.0, z: 0.0}
+            orientation: {x: 0.0, y: 0.0, z: -0.7071, w: 0.7071}
+          velocity:
+            linear: {x: 0.2, y: 0.0, z: 0.0}
+            angular: {x: 0.0, y: 0.0, z: -0.1571}
+          time: 0.0
+        point_2:
+          pose:
+            position: {x: 2.0, y: -2.0, z: 0.0}
+            orientation: {x: 0.0, y: 0.0, z: -1.0, w: 0.0}
+          velocity:
+            linear: {x: 0.2, y: 0.0, z: 0.0}
+            angular: {x: 0.0, y: 0.0, z: -0.1571}
+          time: 0.0
+        point_3:
+          pose:
+            position: {x: 0.0, y: -2.0, z: 0.0}
+            orientation: {x: 0.0, y: 0.0, z: 0.7071, w: 0.7071}
+          velocity:
+            linear: {x: 0.2, y: 0.0, z: 0.0}
+            angular: {x: 0.0, y: 0.0, z: -0.1571}
+          time: 0.0
+        point_4:
+          pose:
+            position: {x: 0.0, y: 0.0, z: 0.0}
+            orientation: {x: 0.0, y: 0.0, z: 0.0, w: 1.0}
+          velocity:
+            linear: {x: 0.0, y: 0.0, z: 0.0}
+            angular: {x: 0.0, y: 0.0, z: 0.0}
+          time: 0.0
+
+      figure_8_path_speed:
+        point_0:
+          pose:
+            position: {x: 0.0, y: -1.0, z: 0.0}
+            orientation: {x: 0.0, y: 0.0, z: 0.7071, w: 0.7071}
+          velocity:
+            linear: {x: 0.2828, y: 0.0, z: 0.0}
+            angular: {x: 0.0, y: 0.0, z: 0.3142}
+          time: 0.0
+        point_1:
+          pose:
+            position: {x: 1.0, y: 0.0, z: 0.0}
+            orientation: {x: 0.0, y: 0.0, z: 1.0, w: 0.0}
+          velocity:
+            linear: {x: 0.2828, y: 0.0, z: 0.0}
+            angular: {x: 0.0, y: 0.0, z: 0.3142}
+          time: 0.0
+        point_2:
+          pose:
+            position: {x: 0.0, y: 1.0, z: 0.0}
+            orientation: {x: 0.0, y: 0.0, z: -0.7071, w: 0.7071}
+          velocity:
+            linear: {x: 0.2828, y: 0.0, z: 0.0}
+            angular: {x: 0.0, y: 0.0, z: 0.3142}
+          time: 0.0
+        point_3:
+          pose:
+            position: {x: -1.0, y: 0.0, z: 0.0}
+            orientation: {x: 0.0, y: 0.0, z: 0.0, w: 1.0}
+          velocity:
+            linear: {x: 0.2828, y: 0.0, z: 0.0}
+            angular: {x: 0.0, y: 0.0, z: 0.3142}
+          time: 0.0
+        point_4:
+          pose:
+            position: {x: 0.0, y: -1.0, z: 0.0}
+            orientation: {x: 0.0, y: 0.0, z: 0.7071, w: 0.7071}
+          velocity:
+            linear: {x: 0.0, y: 0.0, z: 0.0}
+            angular: {x: 0.0, y: 0.0, z: 0.0}
+          time: 0.0
+
+      triangle_path_speed:
+        point_0:
+          pose:
+            position: {x: 0.0, y: -1.0, z: 0.0}
+            orientation: {x: 0.0, y: 0.0, z: 0.5, w: 0.866}
+          velocity:
+            linear: {x: 0.378, y: 0.0, z: 0.0}
+            angular: {x: 0.0, y: 0.0, z: 0.2992}
+          time: 0.0
+        point_1:
+          pose:
+            position: {x: 1.732, y: 1.0, z: 0.0}
+            orientation: {x: 0.0, y: 0.0, z: 1.0, w: 0.0}
+          velocity:
+            linear: {x: 0.4949, y: 0.0, z: 0.0}
+            angular: {x: 0.0, y: 0.0, z: 0.2992}
+          time: 0.0
+        point_2:
+          pose:
+            position: {x: -1.732, y: 1.0, z: 0.0}
+            orientation: {x: 0.0, y: 0.0, z: -0.5, w: 0.866}
+          velocity:
+            linear: {x: 0.378, y: 0.0, z: 0.0}
+            angular: {x: 0.0, y: 0.0, z: 0.2992}
+          time: 0.0
+        point_3:
+          pose:
+            position: {x: 0.0, y: -1.0, z: 0.0}
+            orientation: {x: 0.0, y: 0.0, z: 0.5, w: 0.866}
+          velocity:
+            linear: {x: 0.0, y: 0.0, z: 0.0}
+            angular: {x: 0.0, y: 0.0, z: 0.0}
+          time: 0.0
+    max_linear_velocity: 1.0
+    min_linear_velocity: 1.0
+    max_angular_velocity: 1.0
+    min_angular_velocity: 1.0
+    speed_ratio: 0.4
