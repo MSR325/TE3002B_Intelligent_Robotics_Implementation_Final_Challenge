@@ -27,7 +27,10 @@ setup(
             'open_loop_ctrl = puzzlebot_control.open_loop_ctrl:main',
             'square_path_ctrl = puzzlebot_control.square_path_ctrl:main',
             'path_generator = puzzlebot_control.path_generator:main',
-            'open_loop_path_ctrl = puzzlebot_control.open_loop_path_ctrl:main'
+            'open_loop_path_ctrl = puzzlebot_control.open_loop_path_ctrl:main',
+            'segmented_path_generator = puzzlebot_control.segmented_path_generator:main',
+            'fsm_open_loop_path_ctrl = puzzlebot_control.fsm_open_loop_path_ctrl:main',
+
         ],
     },
 )
